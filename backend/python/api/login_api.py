@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Response, Request, status, Depends
 from schema.common_schema import ErrorResponseSchema
-from schema.login_schema import LoginRequestSchema, LoginResponseSchema, LogoutResponseSchema, LoginStatusResponseSchema
+from schema.login_schema import LoginRequestSchema, LoginResponseSchema, LogoutResponseSchema
 from utils import user_utils, uuid_utils, session_utils
 from dao.user_dao import UserDao
 from core.bootstrap import get_session_store, get_user_dao
@@ -100,14 +100,14 @@ async def login_status(request: Request, response: Response, session_store: Base
         if not session_id:
             logger.warning("No session_id found in cookies.")
             response.status_code = status.HTTP_200_OK
-            return LoginStatusResponseSchema(is_logged_in=False)
+            return LoginResponseSchema(message="Not logged in.", session_id="")
 
         logger.info(f"Checking session for session_id: {session_id}")
         existing_session = await session_store.get_session(session_id)
         if not existing_session:
             logger.warning(f"No active session found for session_id: {session_id}")
             response.status_code = status.HTTP_200_OK
-            return LoginStatusResponseSchema(is_logged_in=False)
+            return LoginResponseSchema(message="Not logged in.", session_id="")
 
         # Validate session expiry
         session_expires_at = existing_session.get('expires_at')
@@ -115,11 +115,11 @@ async def login_status(request: Request, response: Response, session_store: Base
             logger.info(f"Session has expired for session_id: {session_id}, deleting session.")
             await session_store.delete_session(session_id)
             response.status_code = status.HTTP_200_OK
-            return LoginStatusResponseSchema(is_logged_in=False)
+            return LoginResponseSchema(message="Not logged in.", session_id="")
 
         logger.info(f"Active session found for session_id: {session_id}")
         response.status_code = status.HTTP_200_OK
-        return LoginStatusResponseSchema(is_logged_in=True)
+        return LoginResponseSchema(message="Logged in.", session_id=session_id)
     except Exception as e:
         logger.exception(f"Unexpected error during login status check: {str(e)}")
         response.status_code = status.HTTP_500_INTERNAL_SERVER_ERROR

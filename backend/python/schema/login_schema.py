@@ -6,9 +6,7 @@ class LoginRequestSchema(BaseModel):
 
 class LoginResponseSchema(BaseModel):
     message: str
-
-class LoginStatusResponseSchema(BaseModel):
-    is_logged_in: bool
+    session_id: str
 
 class LogoutResponseSchema(BaseModel):
     message: str
