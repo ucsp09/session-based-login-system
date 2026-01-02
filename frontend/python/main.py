@@ -1,9 +1,10 @@
 from fastapi import FastAPI
-from fastapi.responses import HTMLResponse, FileResponse
+from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from aiofile import AIOFile
 import os
 import logging
+import aiohttp
 
 # Configure logging
 log_level = logging.INFO
@@ -90,3 +91,19 @@ async def serve_static_file(file_path: str):
     except Exception as e:
         logger.error(f"Error serving static file: {file_path}. Error: {e}")
         return HTMLResponse(content=f"<h1>Error loading file: {str(e)}</h1>", status_code=500)
+    
+@app.get("/ui/protected/resources")
+async def get_all_protected_resources():
+    logger.info("Getting all protected resources")
+    try:
+        url = "http://localhost:8000/api/v1/resources"
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url=url) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    return data
+                else:
+                    return None
+    except Exception as e:
+        logger.error(f"Error retrieving all protected resources. Error: {e}")
+        return JSONResponse(status_code=500, content="Internal Server Error")
