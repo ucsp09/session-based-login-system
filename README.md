@@ -1,4 +1,4 @@
-# Session-Based Login System
+# Session-Based-Auth-System
 
 This project consists of a backend API running on port 8000 and a frontend application running on port 3000. The backend exposes several endpoints to manage users and resources, as well as handle user authentication. The frontend allows users to log in, access protected resources, and log out.
 
