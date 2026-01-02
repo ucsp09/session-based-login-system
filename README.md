@@ -107,8 +107,8 @@ The frontend relies on the presence of the `session_id` cookie to determine if a
 1. Start the backend server
 ```
 cd backend/python
-pip3 install -r requirements.txt
-uvicorn main:app --host localhost --port 8000
+python -m pip install -r requirements.txt
+python -m uvicorn main:app --host localhost --port 8000
 ```
 2. Create a user
 ```
@@ -120,8 +120,8 @@ Select Create User API and execute this API and create a sample user with userna
 1. Start the frontend server
 ```
 cd frontend/python
-pip3 install -r requirements.txt
-uvicorn main:app --host localhost --port 3000
+python -m pip install -r requirements.txt
+python -m uvicorn main:app --host localhost --port 3000
 ```
 
 ## Known Security Limitations
@@ -131,6 +131,17 @@ Because authentication relies on cookies:
 1. The browser automatically sends the session_id cookie on cross-site requests
 2. State-changing endpoints (POST, PUT, DELETE) are vulnerable to Cross-Site Request Forgery (CSRF)
 This limitation is intentional and will be addressed in later projects.
+
+### CSRF Attack Demonstration
+#### Setup
+1. Start the csrf attacker frontend server
+```
+cd csrf_attacker_frontend/python
+python -m pip install -r requirements.txt
+python -m uvicorn main:app --host localhost --port 4000
+```
+2. Login On the original frontend server and then click on csrf attack button
+3. Logout on the original frontend server and then click on csrf attack button
 
 ## Project Scope and Intent
 This project is designed to demonstrate:

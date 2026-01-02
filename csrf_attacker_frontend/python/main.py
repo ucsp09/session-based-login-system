@@ -1,10 +1,9 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import HTMLResponse, FileResponse, JSONResponse
+from fastapi import FastAPI
+from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from aiofile import AIOFile
 import os
 import logging
-import aiohttp
 
 # Configure logging
 log_level = logging.INFO
@@ -24,8 +23,8 @@ app = FastAPI()
 logger.info("Adding CORS middleware.")
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:4000"],
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -91,28 +90,3 @@ async def serve_static_file(file_path: str):
     except Exception as e:
         logger.error(f"Error serving static file: {file_path}. Error: {e}")
         return HTMLResponse(content=f"<h1>Error loading file: {str(e)}</h1>", status_code=500)
-    
-@app.get("/ui/protected/resources")
-async def get_all_protected_resources(request: Request):
-    logger.info("Request received: GET /ui/protected/resources")
-    
-    url = "http://localhost:8000/api/v1/resources"
-    logger.info(f"Fetching protected resources from URL: {url}")
-    
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url=url, headers=request.headers) as response:
-                logger.info(f"Received response with status: {response.status}")
-                
-                if response.status == 200:
-                    data = await response.json()
-                    logger.info(f"Successfully retrieved {data}")
-                    return data
-                else:
-                    # Log detailed info for non-200 responses
-                    text = await response.text()
-                    logger.warning(f"Failed to retrieve resources. Status: {response.status}, Response: {text}")
-                    return JSONResponse(status_code=response.status, content={"error": "Failed to fetch resources"})
-    except Exception as e:
-        logger.error(f"Exception occurred while retrieving resources: {e}")
-        return JSONResponse(status_code=500, content={"error": "Internal Server Error"})

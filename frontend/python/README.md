@@ -1,6 +1,6 @@
 # Local Setup
 ```
 cd frontend/python
-pip3 install -r requirements.txt
-uvicorn main:app --host localhost --port 3000
+python -m pip install -r requirements.txt
+python -m uvicorn main:app --host localhost --port 3000
 ```
