@@ -1,4 +1,4 @@
-# Session-Based-Auth-System
+# auth-session-basic
 
 This project provides a clean and minimal implementation of session-based authentication using HTTP-only cookies. It closely mirrors how traditional web applications handle authentication and serves as a foundation for understanding modern authentication systems and their security trade-offs.
 
